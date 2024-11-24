@@ -5,12 +5,15 @@
     "dependencies": {
         "core": "*",
         "radio": "*",
-        "microphone": "*"
+        "microphone": "*",
+        "i2cLCD1602": "github:makecode-extensions/i2clcd1602#v1.5.0",
+        "eprom-microbit": "github:zobclub/eprom-microbit#3424f25b4ce6257e2f43f8cff2fb3d3226cd37a2"
     },
     "files": [
         "README.md",
         "main.blocks",
-        "main.ts"
+        "main.ts",
+        "main.py"
     ],
     "testFiles": [
         "test.ts"
@@ -23,5 +26,5 @@
     "supportedTargets": [
         "microbit"
     ],
-    "preferredEditor": "blocksprj"
+    "preferredEditor": "pyprj"
 }
