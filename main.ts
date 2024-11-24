@@ -96,9 +96,12 @@ basic.forever(function on_forever2() {
             }
             
         } else if (input.pinIsPressed(TouchPin.P0)) {
+            while (input.pinIsPressed(TouchPin.P0)) {
+                
+            }
             onSetup = 1
             EEPROM.writew(0, timeOn)
-            basic.pause(100)
+            timeRemainSetup = 5
             basic.showIcon(IconNames.Yes)
             basic.clearScreen()
         }
@@ -138,7 +141,11 @@ basic.forever(function on_forever2() {
             }
             
         } else if (input.pinIsPressed(TouchPin.P0)) {
+            while (input.pinIsPressed(TouchPin.P0)) {
+                
+            }
             onSetup = 0
+            timeRemainSetup = 5
             EEPROM.writew(2, timeOff)
             basic.showIcon(IconNames.Yes)
             basic.clearScreen()

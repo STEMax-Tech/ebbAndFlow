@@ -79,9 +79,11 @@ def on_forever2():
             if timeOn < 0:
                 timeOn = 0
         elif input.pin_is_pressed(TouchPin.P0):
+            while input.pin_is_pressed(TouchPin.P0):
+                pass
             onSetup = 1
             EEPROM.writew(0, timeOn)
-            basic.pause(100)
+            timeRemainSetup = 5
             basic.show_icon(IconNames.Yes)
             basic.clear_screen()
     elif onSetup == 1: #On ESA
@@ -110,7 +112,10 @@ def on_forever2():
             if timeOff < 0:
                 timeOff = 0
         elif input.pin_is_pressed(TouchPin.P0):
+            while input.pin_is_pressed(TouchPin.P0):
+                pass
             onSetup = 0
+            timeRemainSetup = 5
             EEPROM.writew(2, timeOff)
             basic.show_icon(IconNames.Yes)
             basic.clear_screen()
