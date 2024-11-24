@@ -30,17 +30,17 @@ def on_forever():
             string = "Setup: TimeOn   "
             I2C_LCD1602.show_string(string, 0, 0)
             hourSet, minSet, secSet = transTime(timeOn)
-            string = "Time: %2dh%2dm%2ds     " % (hourSet, minSet, secSet)
+            string = "Time: %2dh%2dm%2ds " % (hourSet, minSet, secSet)
             I2C_LCD1602.show_string(string, 0, 1)
         elif onSetup == 1: #Setup hold time
             string = "Setup: TimeOff  "
             I2C_LCD1602.show_string(string, 0, 0)
             hourSet, minSet, secSet = transTime(timeOff)
-            string = "Time: %2dh%2dm%2ds     " % (hourSet, minSet, secSet)
+            string = "Time: %2dh%2dm%2ds " % (hourSet, minSet, secSet)
             I2C_LCD1602.show_string(string, 0, 1)
     else:
         hourSet, minSet, secSet = transTime(timeTriger)
-        string = "Time: %2dh%2dm%2ds   " % (hourSet, minSet, secSet)
+        string = "Time: %2dh%2dm%2ds " % (hourSet, minSet, secSet)
         I2C_LCD1602.show_string(string, 0, 0)
         if(motor):
             string = "-----Active-----"

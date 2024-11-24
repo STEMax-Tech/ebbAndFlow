@@ -30,20 +30,20 @@ basic.forever(function on_forever() {
             string = "Setup: TimeOn   "
             I2C_LCD1602.ShowString(string, 0, 0)
             let [hourSet, minSet, secSet] = transTime(timeOn)
-            string = `Time: ${hourSet}h${minSet}m${secSet}s     `
+            string = `Time: ${hourSet}h${minSet}m${secSet}s `
             I2C_LCD1602.ShowString(string, 0, 1)
         } else if (onSetup == 1) {
             // Setup hold time
             string = "Setup: TimeOff  "
             I2C_LCD1602.ShowString(string, 0, 0)
             let [hourSet, minSet, secSet] = transTime(timeOff)
-            string = `Time: ${hourSet}h${minSet}m${secSet}s     `
+            string = `Time: ${hourSet}h${minSet}m${secSet}s `
             I2C_LCD1602.ShowString(string, 0, 1)
         }
         
     } else {
         let [hourSet, minSet, secSet] = transTime(timeTriger)
-        string = `Time: ${hourSet}h${minSet}m${secSet}s   `
+        string = `Time: ${hourSet}h${minSet}m${secSet}s `
         I2C_LCD1602.ShowString(string, 0, 0)
         if (motor) {
             string = "-----Active-----"
