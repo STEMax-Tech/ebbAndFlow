@@ -8,58 +8,55 @@ function transTime(time: number): number[] {
 pins.analogWritePin(AnalogPin.P14, 0)
 pins.analogWritePin(AnalogPin.P13, 0)
 let speed = 0
-let timeOn = 3
+let timeOn = 40
 // timeOn = EEPROM.readw(0) #read old value of Hold time AE
-let timeOff = 3
+let timeOff = 20
 // timeOff = EEPROM.readw(2)
-let counterClearLCD = 0
-makerbit.connectLcd(39)
-makerbit.setLcdBacklight(LcdBacklight.On)
+I2C_LCD1602.LcdInit(39)
+I2C_LCD1602.on()
+I2C_LCD1602.BacklightOn()
 let timeRemainSetup = 5
 let motor = 0
 let onSetup = 0
 let timeTriger = timeOff
 basic.forever(function on_forever() {
     let string: string;
+    let change: number;
     // ===========================================================================
     
     if (timeRemainSetup > 0) {
         // setup on process
         if (onSetup == 0) {
-            // Setup delay time
+            // Setup delay time 
             string = "Setup: TimeOn   "
-            makerbit.showStringOnLcd1602(string, makerbit.position1602(LcdPosition1602.Pos1), 16)
-            basic.pause(100)
+            I2C_LCD1602.ShowString(string, 0, 0)
             let [hourSet, minSet, secSet] = transTime(timeOn)
             string = `Time: ${hourSet}h${minSet}m${secSet}s `
-            makerbit.showStringOnLcd1602(string, makerbit.position1602(LcdPosition1602.Pos17), 16)
-            basic.pause(100)
+            I2C_LCD1602.ShowString(string, 0, 1)
+            change = 0
         } else if (onSetup == 1) {
             // Setup hold time
             string = "Setup: TimeOff  "
-            makerbit.showStringOnLcd1602(string, makerbit.position1602(LcdPosition1602.Pos1), 16)
-            basic.pause(100)
+            I2C_LCD1602.ShowString(string, 0, 0)
             let [hourSet, minSet, secSet] = transTime(timeOff)
             string = `Time: ${hourSet}h${minSet}m${secSet}s `
-            makerbit.showStringOnLcd1602(string, makerbit.position1602(LcdPosition1602.Pos17), 16)
-            basic.pause(100)
+            I2C_LCD1602.ShowString(string, 0, 1)
         }
         
     } else {
         let [hourSet, minSet, secSet] = transTime(timeTriger)
         string = `Time: ${hourSet}h${minSet}m${secSet}s `
-        makerbit.showStringOnLcd1602(string, makerbit.position1602(LcdPosition1602.Pos1), 16)
-        basic.pause(100)
+        I2C_LCD1602.ShowString(string, 0, 0)
         if (motor) {
             string = "-----Active-----"
         } else {
             string = "----Inactive----"
         }
         
-        makerbit.showStringOnLcd1602(string, makerbit.position1602(LcdPosition1602.Pos17), 16)
-        basic.pause(100)
+        I2C_LCD1602.ShowString(string, 0, 1)
     }
     
+    basic.pause(100)
 })
 basic.forever(function on_forever2() {
     let counter: number;
@@ -106,7 +103,7 @@ basic.forever(function on_forever2() {
                 
             }
             onSetup = 1
-            // EEPROM.writew(0, timeOn)
+            EEPROM.writew(0, timeOn)
             timeRemainSetup = 5
             basic.showIcon(IconNames.Yes)
             basic.clearScreen()
@@ -152,7 +149,7 @@ basic.forever(function on_forever2() {
             }
             onSetup = 0
             timeRemainSetup = 5
-            // EEPROM.writew(2, timeOff)
+            EEPROM.writew(2, timeOff)
             basic.showIcon(IconNames.Yes)
             basic.clearScreen()
         }
@@ -165,8 +162,12 @@ basic.forever(function on_forever5() {
     
     if (motor == 1) {
         pins.analogWritePin(AnalogPin.P14, 0)
-        if (speed < 800) {
-            speed += 20
+        if (speed < 1023) {
+            speed += 33
+            if (speed > 1023) {
+                speed = 1023
+            }
+            
         }
         
         pins.analogWritePin(AnalogPin.P13, speed)

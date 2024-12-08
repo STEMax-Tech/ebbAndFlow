@@ -7,14 +7,14 @@ def transTime(time):
 pins.analog_write_pin(AnalogPin.P14, 0)
 pins.analog_write_pin(AnalogPin.P13, 0)
 speed = 0
-timeOn = 3
+timeOn = 40
 #timeOn = EEPROM.readw(0) #read old value of Hold time AE
-timeOff = 3
+timeOff = 20
 #timeOff = EEPROM.readw(2)
-counterClearLCD = 0
 
-makerbit.connect_lcd(39)
-makerbit.set_lcd_backlight(LcdBacklight.ON)
+I2C_LCD1602.lcd_init(39)
+I2C_LCD1602.on()
+I2C_LCD1602.backlight_on()
 
 timeRemainSetup = 5
 motor = 0
@@ -23,36 +23,32 @@ timeTriger = timeOff
 
 def on_forever():
     #===========================================================================
-    global timeOn, timeOff, motor, timeRemainSetup, onSetup, timeTriger, counterClearLCD
+    global timeOn, timeOff, motor, timeRemainSetup, onSetup, timeTriger
     if timeRemainSetup > 0: #setup on process
-        if onSetup == 0: #Setup delay time
+        if onSetup == 0: #Setup delay time 
             string = "Setup: TimeOn   "
-            makerbit.show_string_on_lcd1602(string, makerbit.position1602(LcdPosition1602.POS1), 16)
-            basic.pause(100)
+            I2C_LCD1602.show_string(string, 0, 0)
             hourSet, minSet, secSet = transTime(timeOn)
             string = "Time: %2dh%2dm%2ds " % (hourSet, minSet, secSet)
-            makerbit.show_string_on_lcd1602(string, makerbit.position1602(LcdPosition1602.POS17), 16)
-            basic.pause(100)
+            I2C_LCD1602.show_string(string, 0, 1)
+            change = 0;
                 
         elif onSetup == 1: #Setup hold time
             string = "Setup: TimeOff  "
-            makerbit.show_string_on_lcd1602(string, makerbit.position1602(LcdPosition1602.POS1), 16)
-            basic.pause(100)
+            I2C_LCD1602.show_string(string, 0, 0)
             hourSet, minSet, secSet = transTime(timeOff)
             string = "Time: %2dh%2dm%2ds " % (hourSet, minSet, secSet)
-            makerbit.show_string_on_lcd1602(string, makerbit.position1602(LcdPosition1602.POS17), 16)
-            basic.pause(100)
+            I2C_LCD1602.show_string(string, 0, 1)
     else:
         hourSet, minSet, secSet = transTime(timeTriger)
         string = "Time: %2dh%2dm%2ds " % (hourSet, minSet, secSet)
-        makerbit.show_string_on_lcd1602(string, makerbit.position1602(LcdPosition1602.POS1), 16)
-        basic.pause(100)
+        I2C_LCD1602.show_string(string, 0, 0)
         if(motor):
             string = "-----Active-----"
         else:
             string = "----Inactive----"
-        makerbit.show_string_on_lcd1602(string, makerbit.position1602(LcdPosition1602.POS17), 16)
-        basic.pause(100)
+        I2C_LCD1602.show_string(string, 0, 1)
+    basic.pause(100)           
 basic.forever(on_forever)
 
 def on_forever2():
@@ -88,7 +84,7 @@ def on_forever2():
             while input.pin_is_pressed(TouchPin.P0):
                 pass
             onSetup = 1
-            #EEPROM.writew(0, timeOn)
+            EEPROM.writew(0, timeOn)
             timeRemainSetup = 5
             basic.show_icon(IconNames.Yes)
             basic.clear_screen()
@@ -122,7 +118,7 @@ def on_forever2():
                 pass
             onSetup = 0
             timeRemainSetup = 5
-            #EEPROM.writew(2, timeOff)
+            EEPROM.writew(2, timeOff)
             basic.show_icon(IconNames.Yes)
             basic.clear_screen()
     basic.pause(100)
@@ -132,8 +128,10 @@ def on_forever5():
     global motor, timeOn, timeOff, timeTriger, speed
     if motor == 1:
         pins.analog_write_pin(AnalogPin.P14, 0)
-        if speed < 800:
-            speed += 20
+        if speed < 1023:
+            speed += 33
+            if speed > 1023:
+                speed = 1023
         pins.analog_write_pin(AnalogPin.P13, speed)
         serial.write_value("speed: ", speed)
         basic.pause(10)
